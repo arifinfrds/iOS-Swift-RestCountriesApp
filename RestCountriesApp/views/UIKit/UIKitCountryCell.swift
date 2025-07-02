@@ -16,8 +16,9 @@ final class UIKitCountryCell: UITableViewCell {
         var content = defaultContentConfiguration()
         content.text = country.name.common
         content.secondaryText = country.name.official
+        content.image = UIImage(systemName: "progress.indicator")
         content.imageProperties.maximumSize = CGSize(width: 44, height: 44)
-        content.image = UIImage(named: "progress.indicator")
+
         contentConfiguration = content
         
         image(for: country) { [weak self] result in
@@ -29,7 +30,7 @@ final class UIKitCountryCell: UITableViewCell {
                 }
             case .failure:
                 DispatchQueue.main.async {
-                    content.image = UIImage(named: "photo")
+                    content.image = UIImage(named: "xmark.octagon")
                 }
             }
         }
@@ -38,8 +39,18 @@ final class UIKitCountryCell: UITableViewCell {
     private func image(for country: CountryEntity, completion: @escaping (Result<Data, Error>) -> Void) {
         let imageURL = country.flag.png
         let session = URLSession(configuration: .ephemeral)
-        let imageLoader = RemoteImageDataLoader(session: session, url: imageURL)
+        let imageLoader = DelayedImageDataLoaderDecorator(decoratee: RemoteImageDataLoader(session: session, url: imageURL))
         imageLoader.load(completion: completion)
     }
     
+}
+
+struct DelayedImageDataLoaderDecorator: ImageDataLoader {
+    let decoratee: ImageDataLoader
+    
+    func load(completion: @escaping (Result<Data, Error>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            decoratee.load(completion: completion)
+        }
+    }
 }
