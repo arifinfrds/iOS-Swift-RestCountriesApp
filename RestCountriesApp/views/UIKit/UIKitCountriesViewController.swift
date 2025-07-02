@@ -44,7 +44,6 @@ final class UIKitCountriesViewController: UIViewController {
         tableView.dataSource = self
     }
     
-    
     @MainActor
     private func onLoad() {
         Task {
