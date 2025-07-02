@@ -39,7 +39,7 @@ final class UIKitCountriesViewController: UIViewController {
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(UIKitCountryCell.self, forCellReuseIdentifier: UIKitCountryCell.cellId)
         
         tableView.dataSource = self
     }
@@ -69,11 +69,11 @@ extension UIKitCountriesViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: UIKitCountryCell.cellId) as? UIKitCountryCell else {
             return UITableViewCell()
         }
-        cell.textLabel?.text = countries[indexPath.row].name.common
-        cell.detailTextLabel?.text = countries[indexPath.row].name.official
+        let country = countries[indexPath.row]
+        cell.configure(with: country)
         return cell
     }
 }
