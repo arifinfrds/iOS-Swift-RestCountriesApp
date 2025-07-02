@@ -17,6 +17,7 @@ final class UIKitCountryCell: UITableViewCell {
         content.text = country.name.common
         content.secondaryText = country.name.official
         content.imageProperties.maximumSize = CGSize(width: 44, height: 44)
+        content.image = UIImage(named: "progress.indicator")
         contentConfiguration = content
         
         image(for: country) { [weak self] result in
@@ -27,31 +28,18 @@ final class UIKitCountryCell: UITableViewCell {
                     self?.contentConfiguration = content
                 }
             case .failure:
-                content.image = UIImage(named: "photo")
+                DispatchQueue.main.async {
+                    content.image = UIImage(named: "photo")
+                }
             }
         }
-    }
-    
-    enum Error: Swift.Error {
-        case failedToFetchImage
     }
     
     private func image(for country: CountryEntity, completion: @escaping (Result<Data, Error>) -> Void) {
         let imageURL = country.flag.png
-        let request = URLRequest(url: imageURL, cachePolicy: .useProtocolCachePolicy)
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if error != nil {
-                return
-            }
-            if let data, let httpResponse = response as? HTTPURLResponse {
-                if httpResponse.statusCode == 200 {
-                    completion(.success(data))
-                } else {
-                    completion(.failure(Error.failedToFetchImage))
-                }
-            }
-        }
-        .resume()
+        let session = URLSession(configuration: .ephemeral)
+        let imageLoader = RemoteImageDataLoader(session: session, url: imageURL)
+        imageLoader.load(completion: completion)
     }
     
 }
