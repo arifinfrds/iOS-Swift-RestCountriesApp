@@ -6,6 +6,7 @@ final class UIKitCountriesViewController: UIViewController {
     private let viewModel: CountriesViewModel
     
     private let tableView = UITableView()
+    private let refreshControl = UIRefreshControl()
     private var cancellables = Set<AnyCancellable>()
     
     private var countries = [CountryEntity]()
@@ -42,6 +43,9 @@ final class UIKitCountriesViewController: UIViewController {
         tableView.register(UIKitCountryCell.self, forCellReuseIdentifier: UIKitCountryCell.cellId)
         
         tableView.dataSource = self
+        
+        refreshControl.addTarget(self, action: #selector(onPullToRefresh), for: .valueChanged)
+        tableView.refreshControl = refreshControl
     }
     
     @MainActor
@@ -57,6 +61,13 @@ final class UIKitCountriesViewController: UIViewController {
                 self?.tableView.reloadData()
             }
             .store(in: &cancellables)
+    }
+    
+    @MainActor
+    @objc private func onPullToRefresh() {
+        Task {
+            await viewModel.onLoad()
+        }
     }
 }
 
