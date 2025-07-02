@@ -13,7 +13,10 @@ final class UIKitCountryCell: UITableViewCell {
     }
     
     func configure(with country: CountryEntity) {
-        textLabel?.text = country.name.common
-        detailTextLabel?.text = country.name.official
+        var content = defaultContentConfiguration()
+        content.text = country.name.common
+        content.secondaryText = country.name.official
+        
+        contentConfiguration = content
     }
 }
