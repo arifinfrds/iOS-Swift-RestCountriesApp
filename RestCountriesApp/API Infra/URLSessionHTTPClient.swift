@@ -1,15 +1,18 @@
 import Foundation
 
-struct URLSessionHTTPClient: HTTPClient {
+final class URLSessionHTTPClient: HTTPClient {
     
-    let session: URLSession
+    private let session: URLSession
+    
+    init(session: URLSession) {
+        self.session = session
+    }
     
     enum Error: Swift.Error {
         case invalidURLResponseType
     }
     
-    func load() async throws -> (Data, HTTPURLResponse) {
-        let url = URL(string: "https://restcountries.com/v3.1/all?fields=name,flags")!
+    func load(from url: URL) async throws -> (Data, HTTPURLResponse) {
         let urlRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy)
         do {
             let (data, response) = try await session.data(for: urlRequest)

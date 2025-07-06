@@ -10,4 +10,7 @@ extension XCTestCase {
         HTTPURLResponse(url: anyURL(), statusCode: statusCode, httpVersion: nil, headerFields: nil)!
     }
     
+    func anyError() -> NSError {
+        NSError(domain: "any-error", code: -1)
+    }
 }

@@ -15,8 +15,9 @@ struct LoadCountryFromRemoteUseCase: LoadCountryUseCase {
     }
     
     func loadCountries() async throws -> [CountryEntity] {
+        let url = URL(string: "https://restcountries.com/v3.1/all?fields=name,flags")!
         do {
-            let (data, response) =  try await client.load()
+            let (data, response) =  try await client.load(from: url)
             return try CountriesMapper.map(data, response)
         } catch {
             throw error

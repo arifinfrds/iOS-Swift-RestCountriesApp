@@ -171,9 +171,5 @@ final class CountriesViewModelTests: XCTestCase {
         
         return [mockCountry1, mockCountry2]
     }
-    
-    private func anyError() -> NSError {
-        NSError(domain: "any-error", code: -1)
-    }
 
 }

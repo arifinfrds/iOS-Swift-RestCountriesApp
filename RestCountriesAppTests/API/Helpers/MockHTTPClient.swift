@@ -14,7 +14,7 @@ final class MockHTTPClient: HTTPClient {
         self.loadResult = loadResult
     }
     
-    func load() async throws -> (Data, HTTPURLResponse) {
+    func load(from url: URL) async throws -> (Data, HTTPURLResponse) {
         invocations.append(.load)
         return try loadResult.get()
     }
